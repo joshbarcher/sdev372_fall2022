@@ -1,29 +1,51 @@
 package edu.greenriver.sdev.springfirstproject.controllers;
 
 import edu.greenriver.sdev.springfirstproject.models.Candy;
+import edu.greenriver.sdev.springfirstproject.services.CandyService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+//tell spring to register our rest controller as a spring bean
 //this makes our class a RESTful api (controller)
 @RestController
 public class ApiController
 {
-    private List<Candy> candies = List.of(
-        new Candy("Reese Cups", 3.99),
-        new Candy("Skittles", 1.99),
-        new Candy("Twix", 2.99),
-        new Candy("Kit Kat", 3.99),
-        new Candy("Gummy Bears", 2.49),
-        new Candy("Laffy Taffy", 3.19),
-        new Candy("Kinder Buenos", 5.99)
-    );
+    //the service is injected by the spring context (DI - dependency injection)
+    private CandyService service;
+
+    public ApiController(CandyService service)
+    {
+        this.service = service;
+    }
 
     //http://localhost:8081/candies
     @GetMapping("candies")
     public List<Candy> getAllCandies()
     {
-        return candies;
+        return service.getAllCandy();
+    }
+
+    //http://localhost:8081/candies/expensive
+    @GetMapping("candies/expensive")
+    public List<Candy> getExpensiveCandy()
+    {
+        return service.getExpensiveCandy();
+    }
+
+    //http://localhost:8081/candies/favorite
+    @GetMapping("candies/favorite")
+    public Candy getFavoriteCandy()
+    {
+        return service.getFavorite();
+    }
+
+    //http://localhost:8081/candies/morethan/3.00
+    @GetMapping("candies/morethan/{price}")
+    public List<Candy> getMoreThan(@PathVariable double price)
+    {
+        return service.getMoreExpensiveThan(price);
     }
 }
