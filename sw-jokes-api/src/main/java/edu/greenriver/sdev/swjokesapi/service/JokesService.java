@@ -37,6 +37,14 @@ public class JokesService
         return jokes;
     }
 
+    public List<Joke> searchJokes(String queryValue)
+    {
+        return jokes.stream()
+            .filter(joke -> joke.getJokeText().toLowerCase()
+                    .contains(queryValue.toLowerCase()))
+            .toList();
+    }
+
     //UPDATE
     public Joke updateJoke(UUID id, String newJokeText)
     {
@@ -61,7 +69,7 @@ public class JokesService
     //DELETE
     public void deleteJoke(UUID id)
     {
-        jokes.stream()
+        jokes = jokes.stream()
             .filter(joke -> !joke.getId().equals(id))
             .toList();
     }

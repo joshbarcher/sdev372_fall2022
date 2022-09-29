@@ -1,6 +1,7 @@
 package edu.greenriver.sdev.swjokesapi.controllers;
 
 import edu.greenriver.sdev.swjokesapi.model.Joke;
+import edu.greenriver.sdev.swjokesapi.model.Query;
 import edu.greenriver.sdev.swjokesapi.service.JokesService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,17 @@ public class WebApi
     {
         return service.allJokes();
     }
+
+    // how do we get inputs through a request
+    // **************************************
+
+    @GetMapping("query")
+    public List<Joke> filterJokes(@RequestBody Query query)
+    {
+        return service.searchJokes(query.getQueryValue());
+    }
+
+    // **************************************
 
     //POST request to http://localhost:8080/api/v1/joke
     @PostMapping("")
