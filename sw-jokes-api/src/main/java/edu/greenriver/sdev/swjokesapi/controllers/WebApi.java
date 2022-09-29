@@ -37,14 +37,14 @@ public class WebApi
     }
 
     @PutMapping("")
-    public Joke editAJoke()
+    public Joke editAJoke(@RequestBody Joke tempJoke)
     {
-        return null;
+        return service.updateJoke(tempJoke.getId(), tempJoke.getJokeText());
     }
 
     @DeleteMapping("")
-    public void deleteAJoke()
+    public void deleteAJoke(@RequestBody Joke tempJoke)
     {
-
+        service.deleteJoke(tempJoke.getId());
     }
 }

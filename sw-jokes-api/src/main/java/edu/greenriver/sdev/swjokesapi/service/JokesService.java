@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,12 +40,29 @@ public class JokesService
     //UPDATE
     public Joke updateJoke(UUID id, String newJokeText)
     {
-        return null;
+        Optional<Joke> foundJoke = jokes.stream()
+            .filter(joke -> joke.getId().equals(id))
+            .findFirst();
+
+        if (foundJoke.isPresent())
+        {
+            //update it
+            Joke joke = foundJoke.get();
+            joke.setJokeText(newJokeText);
+            return joke;
+        }
+        else
+        {
+            //otherwise, return null
+            return null;
+        }
     }
 
     //DELETE
     public void deleteJoke(UUID id)
     {
-
+        jokes.stream()
+            .filter(joke -> !joke.getId().equals(id))
+            .toList();
     }
 }
