@@ -3,6 +3,8 @@ package edu.greenriver.sdev.swjokesapi.controllers;
 import edu.greenriver.sdev.swjokesapi.model.Joke;
 import edu.greenriver.sdev.swjokesapi.model.Query;
 import edu.greenriver.sdev.swjokesapi.service.JokesService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,33 +27,58 @@ public class WebApi
 
     //GET request to http://localhost:8080/api/v1/joke
     @GetMapping("")
-    public List<Joke> allJokes()
+    public ResponseEntity<List<Joke>> allJokes()
     {
-        return service.allJokes();
+        //return the response using a constructor
+        return new ResponseEntity<>(service.allJokes(), HttpStatus.OK);
     }
 
     // how do we get inputs through a request
     // **************************************
 
     @GetMapping("query")
-    public List<Joke> filterJokes(@RequestBody Query query)
+    public ResponseEntity<Object> filterJokes(@RequestBody Query query)
     {
-        return service.searchJokes(query.getQueryValue());
+        //we won't allow this end-point to be used with an empty query
+        if (query.getQueryValue() == null || query.getQueryValue().isEmpty())
+        {
+            return new ResponseEntity<>("The query string cannot be empty/null", HttpStatus.BAD_REQUEST);
+        }
+
+        //an alternative using factory methods
+        return ResponseEntity.ok(service.searchJokes(query.getQueryValue()));
     }
 
     // **************************************
 
     //POST request to http://localhost:8080/api/v1/joke
     @PostMapping("")
-    public Joke addAJoke(@RequestBody Joke tempJoke)
+    public ResponseEntity<Object> addAJoke(@RequestBody Joke tempJoke)
     {
-        return service.addJoke(tempJoke.getJokeText());
+        //don't add an empty joke
+        if (tempJoke.getJokeText() == null || tempJoke.getJokeText().isEmpty())
+        {
+            return new ResponseEntity<>("The joke text cannot be empty/null", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(service.addJoke(tempJoke.getJokeText()), HttpStatus.CREATED);
     }
 
     @PutMapping("")
-    public Joke editAJoke(@RequestBody Joke tempJoke)
+    public ResponseEntity<Object> editAJoke(@RequestBody Joke tempJoke)
     {
-        return service.updateJoke(tempJoke.getId(), tempJoke.getJokeText());
+        //make sure the id of the joke is found
+        if (!service.jokeExists(tempJoke.getId()))
+        {
+            return new ResponseEntity<>("Joke does not exist!", HttpStatus.NOT_FOUND);
+        }
+        //don't add an empty joke
+        else if (tempJoke.getJokeText() == null || tempJoke.getJokeText().isEmpty())
+        {
+            return new ResponseEntity<>("The joke text cannot be empty/null", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(service.updateJoke(tempJoke.getId(), tempJoke.getJokeText()), HttpStatus.OK);
     }
 
     @DeleteMapping("")

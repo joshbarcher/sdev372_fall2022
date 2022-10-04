@@ -73,4 +73,10 @@ public class JokesService
             .filter(joke -> !joke.getId().equals(id))
             .toList();
     }
+
+    public boolean jokeExists(UUID id)
+    {
+        return jokes.stream()
+            .anyMatch(joke -> joke.getId().equals(id));
+    }
 }
