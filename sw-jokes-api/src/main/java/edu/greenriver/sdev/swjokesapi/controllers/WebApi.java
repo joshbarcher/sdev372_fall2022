@@ -82,8 +82,16 @@ public class WebApi
     }
 
     @DeleteMapping("")
-    public void deleteAJoke(@RequestBody Joke tempJoke)
+    public ResponseEntity<Object> deleteJoke(@RequestBody Joke tempJoke)
     {
+        // make sure the id of the joke is found
+        if (!service.jokeExists(tempJoke.getId()))
+        {
+            return new ResponseEntity<>("Joke does not exist!", HttpStatus.NOT_FOUND);
+        }
+
         service.deleteJoke(tempJoke.getId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
